@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#07070a">
+<meta name="description" content="CineBox — browse and watch classic cinema online.">
+<link rel="manifest" href="./manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="192x192" href="./icons/icon-192.png">
+<link rel="apple-touch-icon" href="./icons/icon-192.png">
+<title>CineBox – free classic cinema</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🎬%3C/text%3E%3C/svg%3E">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#07070a;--s1:#111116;--s2:#1b1b22;--line:#2a2a33;--tx:#f2f2f5;--mut:#9a9aa8;--red:#e50914;--red2:#ff3b45;color-scheme:dark;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.55 "DM Sans",system-ui,sans-serif}
+button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
+:focus-visible{outline:2px solid var(--red2);outline-offset:2px}
+.d{font-family:"Bebas Neue",Impact,sans-serif;letter-spacing:.03em;font-weight:400}
+header{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:linear-gradient(#000d,#0000);backdrop-filter:blur(8px);padding:12px 4vw;display:flex;align-items:center;gap:22px}
+.logo{font-size:34px;color:var(--red);line-height:1}
+.nav{display:flex;gap:6px;flex:1}
+.nav button{padding:6px 12px;border-radius:6px;color:var(--mut)}
+.nav button:hover,.nav .on{color:#fff}
+.nav .on{background:var(--s2)}
+.sr{display:flex;align-items:center;background:var(--s1);border:1px solid var(--line);border-radius:99px;padding:0 14px}
+.sr input{background:none;border:0;color:inherit;font:inherit;padding:8px 0;width:190px;outline:none}
+.sr:focus-within{border-color:var(--red)}
+.burger{display:none;font-size:24px}
+.hero{position:relative;min-height:78vh;margin-top:-64px;display:flex;align-items:flex-end;background-size:cover;background-position:center;transition:background-image .4s}
+.hero:after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,#07070aee 15%,#0000 70%),linear-gradient(0deg,var(--bg),#0000 40%)}
+.hc{position:relative;z-index:1;padding:0 4vw 70px;max-width:700px}
+.hc h1{font-size:clamp(48px,9vw,110px);line-height:.95;margin:0 0 10px}
+.meta{display:flex;gap:10px;flex-wrap:wrap;color:var(--mut);font-size:14px;align-items:center;margin-bottom:12px}
+.rt{color:#f5c518;font-weight:700}
+.tag{border:1px solid var(--line);border-radius:4px;padding:0 8px}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:11px 24px;border-radius:6px;font-weight:700;margin:10px 10px 0 0;transition:.15s}
+.btn.p{background:var(--red)}.btn.p:hover{background:var(--red2);transform:translateY(-1px)}
+.btn.s{background:#ffffff1f}.btn.s:hover{background:#ffffff33}
+.btn.on{background:#fff;color:#000}
+.dots{position:absolute;right:4vw;bottom:70px;z-index:2;display:flex;gap:8px}
+.dots button{width:10px;height:10px;border-radius:50%;background:#fff5}
+.dots .on{background:var(--red);width:26px;border-radius:6px}
+section.r{padding:18px 4vw 6px}
+.rh{display:flex;align-items:center;justify-content:space-between}
+.rh h2{font-size:30px;margin:0 0 10px}
+.arr button{width:34px;height:34px;border-radius:50%;background:var(--s2);margin-left:6px}
+.arr button:hover{background:var(--red)}
+.row{display:flex;gap:14px;overflow-x:auto;padding:6px 0 18px;scroll-snap-type:x proximity;scrollbar-width:none}
+.row::-webkit-scrollbar{display:none}
+.card{flex:0 0 clamp(140px,16vw,200px);position:relative;border-radius:10px;overflow:hidden;background:var(--s1);scroll-snap-align:start;transition:transform .25s,box-shadow .25s;text-align:left}
+.card:hover{transform:scale(1.07);z-index:3;box-shadow:0 12px 30px #000c,0 0 0 2px var(--red)}
+.card img{display:block;width:100%;aspect-ratio:2/3}
+.ov{position:absolute;inset:0;background:linear-gradient(0deg,#000e 10%,#0000 70%);opacity:0;transition:.25s;display:flex;flex-direction:column;justify-content:flex-end;padding:10px}
+.card:hover .ov,.card:focus-within .ov{opacity:1}
+@media (hover:none){.ov{opacity:1;background:linear-gradient(0deg,#000d 0,#0000 45%)}}
+.ov b{font-size:15px;line-height:1.2}.ov small{color:var(--mut)}
+.ic{display:flex;gap:6px;margin-top:6px}
+.ic button{width:32px;height:32px;border-radius:50%;background:#ffffff26;font-size:15px}
+.ic button:hover{background:var(--red)}.ic .on{background:#fff;color:var(--red)}
+.cardmain{position:absolute;inset:0}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:16px;padding:0 4vw 30px}
+.grid .card{flex:none}
+.pg{padding:90px 4vw 10px}.pg h1{font-size:46px;margin:0 0 6px}
+.chips{display:flex;gap:8px;flex-wrap:wrap;padding:10px 4vw}
+.chip{padding:7px 16px;border-radius:99px;background:var(--s2);border:1px solid var(--line)}
+.chip:hover{border-color:var(--red)}.chip.on{background:var(--red);border-color:var(--red)}
+.det{display:flex;gap:36px;padding:90px 4vw 30px;flex-wrap:wrap}
+.det img{width:min(300px,100%);border-radius:12px;box-shadow:0 20px 50px #000}
+.det>div{flex:1;min-width:260px;max-width:720px}
+.det h1{font-size:clamp(44px,7vw,78px);line-height:1;margin:0 0 8px}
+.pl{position:relative;aspect-ratio:16/9;background:#000 center/cover;border-radius:12px;overflow:hidden;border:1px solid var(--line);margin-top:6px}
+.pl .bk{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:20px;color:var(--mut)}
+.pl iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.wp{padding:84px 4vw 10px;max-width:1100px;margin:auto}
+.empty{padding:50px 4vw;color:var(--mut)}
+.col{flex:0 0 clamp(240px,30vw,340px);padding:20px;color:var(--tx);text-decoration:none;background:linear-gradient(135deg,var(--s2),var(--s1));border:1px solid var(--line);display:block}
+.col b{font-size:26px;display:block;color:var(--red2)}.col span{color:var(--mut);font-size:14px}
+footer{margin-top:50px;border-top:1px solid var(--line);padding:30px 4vw 40px;color:var(--mut);font-size:14px;display:flex;gap:30px;flex-wrap:wrap;justify-content:space-between}
+footer p{max-width:520px;margin:6px 0}
+footer a,footer button{color:var(--mut);margin-right:14px}footer button:hover{color:#fff}
+.toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--s2);border:1px solid var(--line);padding:10px 20px;border-radius:8px;z-index:50}
+@media(max-width:820px){.nav{display:none;position:absolute;top:100%;left:0;right:0;background:#000f;flex-direction:column;padding:10px 4vw}.nav.open{display:flex}.burger{display:block}.sr{flex:1}.sr input{width:100%}.hero{min-height:70vh}.hc{padding-bottom:50px}.dots{bottom:20px}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+.pb{position:absolute;left:0;right:0;bottom:0;height:4px;background:#fff3;z-index:2}.pb i{display:block;height:100%;background:var(--red)}
+.rm{position:absolute;top:6px;right:6px;z-index:4;width:28px;height:28px;border-radius:50%;background:#000b}.rm:hover{background:var(--red)}
+.vp{display:flex;flex-direction:column;background:#000;border-radius:12px;overflow:hidden;border:1px solid var(--line);outline:none}
+.vp:focus-visible{border-color:var(--red)}.vp:fullscreen{border-radius:0}
+.vw{position:relative;aspect-ratio:16/9;background:#000}.vp:fullscreen .vw{aspect-ratio:auto;flex:1}
+.vw video{width:100%;height:100%;display:block;object-fit:contain}
+.cb{display:flex;align-items:center;gap:10px;padding:8px 12px;background:#0d0d12;flex-wrap:wrap}
+.cb button{min-width:36px;height:36px;border-radius:6px;font-size:15px}.cb button:hover{background:var(--s2)}.cb .on{color:var(--red2);font-weight:700}
+.cb input[type=range]{accent-color:var(--red);cursor:pointer}.sk{flex:1;min-width:90px}.vl{width:80px}
+.tm{font-size:13px;color:var(--mut);white-space:nowrap;font-variant-numeric:tabular-nums}
+.er{position:absolute;inset:0;background:#000d;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:20px;gap:6px;color:#fff}
+.er b{color:var(--red2);font-size:20px}
+.fm{max-width:820px;display:grid;gap:12px;padding:0 4vw 20px}.fm label{display:grid;gap:4px;font-size:14px;color:var(--mut)}
+.fm input[type=text],.fm input[type=number],.fm input[type=password],.fm textarea,.sf select{background:var(--s1);border:1px solid var(--line);color:var(--tx);border-radius:8px;padding:10px;font:inherit;width:100%}
+.sf select{width:auto}.sf{padding:0 4vw 10px;color:var(--mut)}
+.fm .two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.alr{padding:10px 14px;border-radius:8px;border:1px solid var(--red);background:#e5091422;font-size:14px}.alr a{color:#fff}.alr.ok{border-color:#3ecf8e;background:#3ecf8e22}
+.al{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap;border:1px solid var(--line);border-radius:8px;padding:8px 12px;background:var(--s1)}
+@media(max-width:600px){.vl{display:none}.fm .two{grid-template-columns:1fr}.cb{gap:6px;padding:6px 8px}.hc h1{font-size:52px}}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.3.1/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.3.1/umd/react-dom.production.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/htm@3.1.1/dist/htm.umd.js"></script>
+<script>
+const {useState,useEffect,useRef}=React;
+const html=htm.bind(React.createElement);
+const GEN=["Action","Comedy","Horror","Romance","Drama"];
+const SEED=[
+{id:"notld",t:"Night of the Living Dead",y:1968,g:["Horror"],r:7.8,m:96,c:["#3a0606","#0a0a0a","#e50914"],s:0,ia:"night_of_the_living_dead",d:"Strangers barricade themselves in a rural farmhouse as the dead begin to walk. A landmark of independent horror."},
+{id:"nosferatu",t:"Nosferatu",y:1922,g:["Horror"],r:7.9,m:94,c:["#0b1a1a","#050505","#7fd6c2"],s:1,ia:"Nosferatu_1922",d:"A real-estate clerk travels to Transylvania and brings a terrifying count back to his town. The silent vampire classic."},
+{id:"hgf",t:"His Girl Friday",y:1940,g:["Comedy","Romance"],r:7.8,m:92,c:["#2a1a05","#0a0805","#f5c518"],s:2,ia:"his_girl_friday",d:"A newspaper editor schemes to win back his ex-wife and star reporter before she remarries. Rapid-fire screwball comedy."},
+{id:"charade",t:"Charade",y:1963,g:["Romance","Comedy"],r:7.9,m:113,c:["#1a0a2a","#08050c","#ff7ab0"],s:3,ia:"Charade_1963",d:"A widow in Paris is hunted by men chasing her late husband’s stolen fortune, and the charming stranger helping her may not be who he claims."},
+{id:"general",t:"The General",y:1926,g:["Action","Comedy"],r:8.1,m:79,c:["#2a1405","#0a0705","#ff9a3c"],s:1,ia:"TheGeneral",d:"A railroad engineer chases a stolen locomotive across enemy lines in Buster Keaton’s stunt-filled masterpiece."},
+{id:"metropolis",t:"Metropolis",y:1927,g:["Drama"],r:8.3,m:153,c:["#0a1530","#04060c","#4da3ff"],s:2,ia:"Metropolis_1927",d:"In a towering futuristic city, the son of its master falls for a worker prophet and uncovers the cost of the machine age."},
+{id:"trip",t:"A Trip to the Moon",y:1902,g:["Action"],r:8.0,m:14,c:["#1a1a2e","#05050a","#c9b6ff"],s:0,ia:"A_Trip_to_the_Moon_1902",d:"A band of astronomers fires a capsule into the Moon’s eye. Georges Méliès’ pioneering fantasy adventure."},
+{id:"doa",t:"D.O.A.",y:1950,g:["Drama","Action"],r:7.1,m:83,c:["#1f1f1f","#050505","#e8e8e8"],s:3,ia:"DOA_1950",d:"A man poisoned with a slow-acting toxin has one day to find out who murdered him and why."},
+{id:"detour",t:"Detour",y:1945,g:["Drama"],r:7.3,m:68,c:["#101820","#040608","#ff5a5f"],s:2,ia:"Detour_1945",d:"A hitchhiker’s cross-country trip spirals into fate and deceit in this lean, bleak film noir."},
+{id:"kid",t:"The Kid",y:1921,g:["Comedy","Drama"],r:8.3,m:68,c:["#241a10","#080605","#ffd27a"],s:0,ia:"TheKid1921",d:"A tramp raises an abandoned child until the authorities step in. Chaplin’s blend of slapstick and heart."},
+{id:"carnival",t:"Carnival of Souls",y:1962,g:["Horror"],r:7.0,m:78,c:["#0a1a20","#040809","#9ad1ff"],s:3,ia:"CarnivalOfSouls1962",d:"After surviving a car crash, a woman is drawn toward an abandoned pavilion and haunted by a ghostly figure."},
+{id:"caligari",t:"The Cabinet of Dr. Caligari",y:1920,g:["Horror","Drama"],r:8.0,m:76,c:["#1a0a1f","#060308","#d36bff"],s:1,ia:"TheCabinetOfDrCaligari",d:"A hypnotist and his sleepwalking showpiece haunt a small town in this landmark of German Expressionism."},
+{id:"sherlock",t:"Sherlock Jr.",y:1924,g:["Comedy","Action"],r:8.2,m:45,c:["#102018","#040806","#6fe3a1"],s:0,ia:"SherlockJr",d:"A film projectionist dreams himself into the movie he is screening in Buster Keaton’s inventive comedy."},
+{id:"phantom",t:"The Phantom of the Opera",y:1925,g:["Horror","Romance"],r:7.5,m:93,c:["#2a0a12","#080305","#ff4d6d"],s:1,ia:"ThePhantomOfTheOpera1925",d:"A disfigured genius haunting the Paris Opera House obsesses over a young singer. Lon Chaney’s unmasking is legendary."}
+];
+const FEAT=["notld","metropolis","hgf","nosferatu","general"],TREND=["nosferatu","charade","kid","notld","sherlock","metropolis","caligari","hgf","phantom"];
+const art=(m,wide)=>{const[a,b,x]=m.c,W=wide?1600:400,H=wide?800:600,cx=wide?W*.72:W*.5,cy=H*.38,R=H*.3;
+ const sh=[`<circle cx="${cx}" cy="${cy}" r="${R}" fill="${x}" opacity=".85"/><circle cx="${cx}" cy="${cy}" r="${R*1.4}" fill="none" stroke="${x}" opacity=".3" stroke-width="3"/>`,
+ `<polygon points="${cx},${cy-R} ${cx+R},${cy+R} ${cx-R},${cy+R}" fill="${x}" opacity=".85"/>`,
+ [0,1,2,3,4,5,6].map(i=>`<rect x="${cx-R+i*R*.3}" y="${cy-R}" width="${R*.15}" height="${R*2}" fill="${x}" opacity=".85"/>`).join(""),
+ [1,.7,.4].map(k=>`<circle cx="${cx}" cy="${cy}" r="${R*k}" fill="none" stroke="${x}" stroke-width="${R*.12}"/>`).join("")][m.s];
+ const w=m.t.split(" ");let L=[],c="";w.forEach(s=>{if(c&&(c+" "+s).length>11){L.push(c);c=s}else c=c?c+" "+s:s});L.push(c);
+ const tx=wide?"":L.map((l,i)=>`<text x="30" y="${H-40-(L.length-1-i)*58}" font-family="Bebas Neue,Impact,sans-serif" font-size="56" fill="#fff">${l.toUpperCase().replace(/[&<>]/g,"")}</text>`).join("")+`<text x="30" y="${H-40-L.length*58-4}" font-family="DM Sans,Arial" font-size="18" fill="${x}">${m.y}</text>`;
+ const svg=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${a}"/><stop offset="1" stop-color="${b}"/></linearGradient></defs><rect width="${W}" height="${H}" fill="url(#g)"/>${sh}<rect y="${H*.55}" width="${W}" height="${H*.45}" fill="#000" opacity=".35"/>${tx}</svg>`;
+ return"data:image/svg+xml;utf8,"+encodeURIComponent(svg)};
+const COLS=[{n:"Feature Films",u:"https://archive.org/details/feature_films",d:"Full-length movies from the Internet Archive’s feature film collection."},{n:"Prelinger Archives",u:"https://archive.org/details/prelinger",d:"Thousands of historic advertising, educational and industrial films."},{n:"Public Domain Movies",u:"https://archive.org/search?query=public+domain+movies&and%5B%5D=mediatype%3A%22movies%22",d:"Movies the Archive lists as public domain. Search and watch free."}];
+const M=[];
+const LS=(k,d=[])=>{try{const v=JSON.parse(localStorage.getItem(k));return v==null?d:v}catch(e){return d}};
+const SV=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}};
+const hs=s=>{let h=0;for(const c of s)h=(h*31+c.charCodeAt(0))>>>0;return h};
+function build(){M.length=0;SEED.forEach(m=>{m.lic="Public domain (US)";M.push(m)});
+ LS("cb_custom").forEach(x=>{const h=hs(x.t),hu=h%360;x.c=["hsl("+hu+" 60% 14%)","#060608","hsl("+hu+" 80% 65%)"];x.s=h%4;M.push(x)});
+ M.forEach(m=>{m.p=art(m);m.w=art(m,1)})}
+build();
+const byId=id=>M.find(m=>m.id===id);
+const rate=m=>m.r?"★ "+m.r:"Unrated";
+const nz=s=>String(s).normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase();
+const tf2=s=>{s=Math.floor(s||0);const h=Math.floor(s/3600),m=Math.floor(s%3600/60),c=String(s%60).padStart(2,"0");return h?h+":"+String(m).padStart(2,"0")+":"+c:m+":"+c};
+function srch(q,gs,sort){const T=nz(q).split(/\s+/).filter(Boolean);
+ const R=M.filter(m=>!gs.length||gs.every(g=>m.g.includes(g))).map(m=>{const t=nz(m.t),g=nz(m.g.join(" ")),d=nz(m.d||""),y=String(m.y);let sc=0;
+  for(const w of T){const s=(t.includes(w)?(t.startsWith(w)||t.includes(" "+w)?4:3):0)+(g.includes(w)?2:0)+(y.includes(w)?2:0)+(d.includes(w)?1:0);if(!s)return null;sc+=s}return{m,sc}}).filter(Boolean);
+ R.sort(sort==="rating"?(a,b)=>b.m.r-a.m.r:sort==="year"?(a,b)=>b.m.y-a.m.y:sort==="title"?(a,b)=>a.m.t.localeCompare(b.m.t):(a,b)=>b.sc-a.sc||b.m.r-a.m.r);
+ return R.map(x=>x.m)}
+function useList(k){const[a,s]=useState(()=>LS(k));return[a,id=>s(p=>{const n=p.includes(id)?p.filter(x=>x!==id):[...p,id];SV(k,n);return n})]}
+const iaLink=m=>m.custom?"https://archive.org/details/"+encodeURIComponent(m.ia):"https://archive.org/search?query="+encodeURIComponent(m.t+" "+m.y+" feature film");
+function parseSrc(u){let x;try{x=new URL(u.trim())}catch(e){return{e:"That is not a valid URL."}}
+ if(x.protocol!=="https:")return{e:"Use an https:// link."};
+ if(x.hostname!=="archive.org"&&!x.hostname.endsWith(".archive.org"))return{e:"Only Internet Archive links (archive.org) are accepted."};
+ const p=x.pathname.split("/").filter(Boolean);
+ if((p[0]==="details"||p[0]==="embed")&&p[1])return{ia:decodeURIComponent(p[1])};
+ if(p[0]==="download"&&p.length>=3&&/\.(mp4|webm|ogv|m4v)$/i.test(p[p.length-1]))return{ia:decodeURIComponent(p[1]),video:x.href};
+ return{e:"Use an archive.org/details/ITEM page link, or a direct archive.org/download/ITEM/FILE.mp4 link (mp4, webm, ogv or m4v)."}}
+
+function Card({m,go,wl,fv,tw,tf,toast,prog,cont,rmProg}){
+ const p=prog&&prog[m.id],pc=p&&p.d>0&&!p.done?Math.min(100,p.t/p.d*100):0;
+ return html`<div class="card"><img src=${m.img||m.p} alt=${"Poster for "+m.t} loading="lazy" onError=${e=>{e.target.onerror=null;e.target.src=m.p}}/>
+ ${pc?html`<div class="pb"><i style=${"width:"+pc+"%"}></i></div>`:null}
+ <button class="cardmain" aria-label=${"Open "+m.t} onClick=${()=>go(cont?"watch-"+m.id:"movie-"+m.id)}></button>
+ ${cont?html`<button class="rm" title="Remove from Continue watching" aria-label="Remove from Continue watching" onClick=${()=>{rmProg(m.id);toast("Removed from Continue watching")}}>✕</button>`:null}
+ <div class="ov" style="pointer-events:none"><b>${m.t}</b><small>${m.y} · <span class="rt">${rate(m)}</span></small>
+ <div class="ic" style="pointer-events:auto">
+ <button title="Play" aria-label="Play" onClick=${()=>go("watch-"+m.id)}>▶</button>
+ <button title="Watchlist" aria-label="Toggle watchlist" class=${wl.includes(m.id)?"on":""} onClick=${()=>{tw(m.id);toast(wl.includes(m.id)?"Removed from watchlist":"Added to watchlist")}}>${wl.includes(m.id)?"✓":"+"}</button>
+ <button title="Favourite" aria-label="Toggle favourite" class=${fv.includes(m.id)?"on":""} onClick=${()=>{tf(m.id);toast(fv.includes(m.id)?"Removed from favourites":"Added to favourites")}}>♥</button></div></div></div>`}
+
+function Row({title,items,P}){
+ const id="r"+title.replace(/\W/g,"");
+ const sc=d=>document.getElementById(id).scrollBy({left:d*document.getElementById(id).clientWidth*.8,behavior:"smooth"});
+ return html`<section class="r"><div class="rh"><h2 class="d">${title}</h2><div class="arr"><button aria-label="Scroll left" onClick=${()=>sc(-1)}>‹</button><button aria-label="Scroll right" onClick=${()=>sc(1)}>›</button></div></div>
+ <div class="row" id=${id}>${items.map(m=>html`<${Card} key=${m.id} m=${m} ...${P}/>`)}</div></section>`}
+
+function Hero({go,wl,tw,toast}){
+ const F=FEAT.map(byId),[i,setI]=useState(0),m=F[i];
+ useEffect(()=>{const t=setInterval(()=>setI(x=>(x+1)%F.length),7000);return()=>clearInterval(t)},[]);
+ return html`<div class="hero" style=${"background-image:url('"+m.w+"')"}><div class="hc"><div class="meta"><span class="rt">${rate(m)}</span><span>${m.y}</span>${m.m?html`<span>${m.m} min</span>`:null}${m.g.map(g=>html`<span class="tag" key=${g}>${g}</span>`)}</div>
+ <h1 class="d">${m.t}</h1><p style="color:#d6d6de">${m.d}</p>
+ <button class="btn p" onClick=${()=>go("watch-"+m.id)}>▶ Play now</button>
+ <button class="btn s" onClick=${()=>go("movie-"+m.id)}>More info</button>
+ <button class=${"btn s"+(wl.includes(m.id)?" on":"")} onClick=${()=>{tw(m.id);toast(wl.includes(m.id)?"Removed from watchlist":"Added to watchlist")}}>${wl.includes(m.id)?"✓ In watchlist":"+ Watchlist"}</button></div>
+ <div class="dots">${F.map((f,k)=>html`<button key=${f.id} aria-label=${"Show "+f.t} class=${k===i?"on":""} onClick=${()=>setI(k)}></button>`)}</div></div>`}
+
+function Grid({items,P,empty}){return items.length?html`<div class="grid">${items.map(m=>html`<${Card} key=${m.id} m=${m} ...${P}/>`)}</div>`:html`<div class="empty">${empty}</div>`}
+
+function Detail({m,go,wl,fv,tw,tf,toast,P}){
+ const rel=M.filter(x=>x.id!==m.id&&x.g.some(g=>m.g.includes(g))).slice(0,8),p=P.prog[m.id],rs=p&&!p.done&&(p.d?p.t>5:true);
+ return html`<div><div class="det"><img src=${m.img||m.p} alt=${"Poster for "+m.t} onError=${e=>{e.target.onerror=null;e.target.src=m.p}}/><div>
+ <div class="meta"><span class="rt">${rate(m)}${m.r?" / 10":""}</span><span>${m.y}</span>${m.m?html`<span>${m.m} min</span>`:null}<span class="tag">${m.lic}</span></div>
+ <h1 class="d">${m.t}</h1><p>${m.g.map(g=>html`<button class="chip" key=${g} onClick=${()=>go("genre-"+g)} style="margin-right:8px">${g}</button>`)}</p>
+ <p style="font-size:18px;color:#d6d6de">${m.d}</p>
+ <button class="btn p" onClick=${()=>go("watch-"+m.id)}>▶ ${rs?(p.d?"Resume at "+tf2(p.t):"Resume"):"Watch now"}</button>
+ <button class=${"btn s"+(wl.includes(m.id)?" on":"")} onClick=${()=>{tw(m.id);toast(wl.includes(m.id)?"Removed from watchlist":"Added to watchlist")}}>${wl.includes(m.id)?"✓ In watchlist":"+ Watchlist"}</button>
+ <button class=${"btn s"+(fv.includes(m.id)?" on":"")} onClick=${()=>{tf(m.id);toast(fv.includes(m.id)?"Removed from favourites":"Added to favourites")}}>♥ ${fv.includes(m.id)?"Favourited":"Favourite"}</button>
+ <p style="font-size:13px;color:var(--mut)">Rights: ${m.lic}. <a style="color:var(--mut)" href=${iaLink(m)} target="_blank" rel="noopener">Check the Internet Archive item ↗</a></p></div></div>
+ ${rel.length?html`<${Row} title="More like this" items=${rel} P=${P}/>`:null}</div>`}
+
+const ERR={1:"Playback was cancelled before the video loaded.",2:"A network error stopped the video. Check your connection, or the file link may no longer be valid.",3:"The video file is damaged or uses a format this browser can’t decode.",4:"This video can’t be loaded. The link may be wrong, the file may have been removed, or this page may be blocked from loading media from archive.org."};
+function Player({m,pr,sp}){
+ const v=useRef(),box=useRef(),last=useRef(0),cur=useRef({t:0,d:0}),start=useRef(pr&&!pr.done?pr.t:0);
+ const[st,setSt]=useState({p:false,t:0,d:0,vol:1,mu:false,w:true}),[err,setErr]=useState(""),[key,setKey]=useState(0),[fs,setFs]=useState(false),[cc,setCc]=useState(true);
+ const[tr,setTr]=useState(m.subs?[{l:"Subtitles",src:m.subs}]:[]);
+ const S=o=>setSt(s=>({...s,...o}));
+ const save=done=>{const c=cur.current;if(c.d>0)sp(m.id,done?0:c.t,c.d,done)};
+ useEffect(()=>{setErr("");const id=setTimeout(()=>{const e=v.current;if(e&&e.readyState<2)setErr("The video is taking too long to load. The link may be blocked or unavailable. Try again, or open it on the Internet Archive.")},15000);return()=>clearTimeout(id)},[key,m.id]);
+ useEffect(()=>()=>{const c=cur.current;if(c.d>0&&c.t>0)sp(m.id,c.t,c.d,false)},[m.id]);
+ useEffect(()=>{const f=()=>setFs(!!document.fullscreenElement);document.addEventListener("fullscreenchange",f);return()=>document.removeEventListener("fullscreenchange",f)},[]);
+ useEffect(()=>{const t=v.current&&v.current.textTracks;if(!t)return;const id=setTimeout(()=>{for(let i=0;i<t.length;i++)t[i].mode=cc&&i===t.length-1?"showing":"disabled"},60);return()=>clearTimeout(id)},[tr,cc,key]);
+ const toggle=()=>{const e=v.current;if(!e)return;e.paused?e.play().catch(()=>setErr(ERR[4])):e.pause()};
+ const seek=t=>{const e=v.current;if(e&&e.duration)e.currentTime=Math.max(0,Math.min(e.duration,t))};
+ const tfs=()=>{const b=box.current;if(document.fullscreenElement)document.exitFullscreen();else if(b.requestFullscreen)b.requestFullscreen();else if(v.current.webkitEnterFullscreen)v.current.webkitEnterFullscreen()};
+ const vol=x=>{v.current.volume=x;v.current.muted=x===0};
+ const key_=e=>{if(e.target.tagName==="INPUT"&&e.target.type==="range"&&e.key.startsWith("Arrow"))return;const k=e.key.toLowerCase();
+  if(k===" "||k==="k"){e.preventDefault();toggle()}else if(e.key==="ArrowRight")seek(v.current.currentTime+10);else if(e.key==="ArrowLeft")seek(v.current.currentTime-10);
+  else if(e.key==="ArrowUp"){e.preventDefault();vol(Math.min(1,st.vol+.1))}else if(e.key==="ArrowDown"){e.preventDefault();vol(Math.max(0,st.vol-.1))}
+  else if(k==="f")tfs();else if(k==="m")v.current.muted=!v.current.muted;else if(k==="c")setCc(!cc)};
+ const sub=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{let t=String(r.result).replace(/\r/g,"");if(!/^WEBVTT/.test(t.replace(/^\uFEFF/,"")))t="WEBVTT\n\n"+t.replace(/(\d{2}:\d{2}:\d{2}),(\d{3})/g,"$1.$2");setTr(a=>[...a,{l:f.name,src:URL.createObjectURL(new Blob([t],{type:"text/vtt"}))}]);setCc(true)};r.onerror=()=>setErr("Could not read that subtitle file.");r.readAsText(f);e.target.value=""};
+ return html`<div class="vp" ref=${box} tabIndex="0" onKeyDown=${key_}><div class="vw">
+ <video key=${key} ref=${v} src=${m.video} preload="metadata" playsInline crossOrigin=${tr.length?"anonymous":undefined} onClick=${toggle}
+  onLoadedMetadata=${e=>{const d=e.target.duration;cur.current.d=d;S({d,w:false});if(start.current>0&&start.current<d-5){e.target.currentTime=start.current;start.current=0}}}
+  onCanPlay=${()=>{S({w:false});setErr("")}} onWaiting=${()=>S({w:true})} onPlaying=${()=>S({w:false,p:true})}
+  onPlay=${()=>S({p:true})} onPause=${()=>{S({p:false});save(false)}} onEnded=${()=>{S({p:false});save(true)}}
+  onTimeUpdate=${e=>{const t=e.target.currentTime;cur.current.t=t;S({t});if(Math.abs(t-last.current)>=5){last.current=t;save(false)}}}
+  onVolumeChange=${e=>S({vol:e.target.volume,mu:e.target.muted})}
+  onError=${()=>setErr(ERR[(v.current&&v.current.error&&v.current.error.code)||4]||ERR[4])}>
+  ${tr.map((t,i)=>html`<track key=${t.src} kind="subtitles" label=${t.l} srclang="en" src=${t.src}/>`)}</video>
+ ${st.w&&!err?html`<div class="er" style="background:#0006;pointer-events:none">Loading…</div>`:null}
+ ${err?html`<div class="er" role="alert"><b>Can’t play this video</b><span style="max-width:520px;color:#ddd">${err}</span>
+  <div><button class="btn p" onClick=${()=>{setErr("");setKey(k=>k+1)}}>Try again</button><a class="btn s" style="color:#fff;text-decoration:none" href=${iaLink(m)} target="_blank" rel="noopener">Open on Internet Archive ↗</a></div></div>`:null}</div>
+ <div class="cb"><button aria-label=${st.p?"Pause":"Play"} onClick=${toggle}>${st.p?"❚❚":"▶"}</button>
+ <span class="tm">${tf2(st.t)} / ${tf2(st.d)}</span>
+ <input class="sk" type="range" min="0" max=${st.d||0} step="1" value=${st.t} aria-label="Seek" onInput=${e=>seek(+e.target.value)}/>
+ <button aria-label=${st.mu?"Unmute":"Mute"} onClick=${()=>{v.current.muted=!v.current.muted}}>${st.mu||st.vol===0?"🔇":"🔊"}</button>
+ <input class="vl" type="range" min="0" max="1" step="0.05" value=${st.mu?0:st.vol} aria-label="Volume" onInput=${e=>vol(+e.target.value)}/>
+ <button aria-label="Toggle subtitles" title=${tr.length?"Subtitles":"No subtitles loaded"} class=${tr.length&&cc?"on":""} onClick=${()=>tr.length?setCc(!cc):setErr("No subtitles loaded yet. Use “Add subtitles” below to load a .vtt or .srt file.")}>CC</button>
+ <button aria-label="Fullscreen" onClick=${tfs}>${fs?"⤡":"⤢"}</button></div>
+ <div class="cb" style="padding-top:0;font-size:13px;color:var(--mut)"><label style="cursor:pointer;text-decoration:underline">Add subtitles (.vtt / .srt)<input type="file" accept=".vtt,.srt" onChange=${sub} style="display:none"/></label><span>· Keys: Space play, ←/→ seek, ↑/↓ volume, F fullscreen, C captions</span></div></div>`}
+
+function Embed({m,sp}){
+ useEffect(()=>{sp(m.id,0,0,false)},[m.id]);
+ return html`<div><div class="pl" style=${"background-image:url('"+m.w+"')"}><div class="bk"><b class="d" style="font-size:34px;color:#fff">${m.t}</b>Loading the Internet Archive player. If it does not appear, it may be blocked here or unavailable. Use the link below.</div>
+ <iframe src=${"https://archive.org/embed/"+encodeURIComponent(m.ia)} allowFullScreen title=${"Player: "+m.t}></iframe></div>
+ <p style="font-size:13px;color:var(--mut)">This title plays in the Internet Archive’s own player, so progress and subtitles are managed there. The custom player is used for films added with a direct video file link.</p></div>`}
+
+function Watch({m,go,P}){
+ const rel=M.filter(x=>x.id!==m.id).slice(0,8),pr=P.prog[m.id];
+ return html`<div><div class="wp"><button class="btn s" style="margin:0 0 12px" onClick=${()=>go("movie-"+m.id)}>‹ Back to details</button>
+ ${m.video?html`<${Player} key=${m.id} m=${m} pr=${pr} sp=${P.sp}/>`:html`<${Embed} key=${m.id} m=${m} sp=${P.sp}/>`}
+ <div class="meta" style="margin-top:14px"><span class="rt">${rate(m)}</span><span>${m.y}</span><span class="tag">${m.lic}</span></div>
+ <p style="color:#d6d6de">${m.d}</p>
+ <a class="btn s" style="color:#fff;text-decoration:none" href=${iaLink(m)} target="_blank" rel="noopener">Open on the Internet Archive ↗</a></div>
+ <${Row} title="Up next" items=${rel} P=${P}/></div>`}
+
+function Admin({bump}){
+ const[ok,setOk]=useState(()=>{try{return sessionStorage.getItem("cb_adm")==="1"}catch(e){return false}});
+ const[hh,setHh]=useState(()=>LS("cb_adm_h","")),[pw,setPw]=useState(""),[msg,setMsg]=useState(null),[bk,setBk]=useState("");
+ const E={t:"",y:"",g:[],r:"",m:"",d:"",src:"",subs:"",img:"",lic:"",ok:false};
+ const[f,setF]=useState(E),[eid,setEid]=useState(null);
+ const set=(k,v)=>setF(p=>({...p,[k]:v}));
+ const sha=async s=>[...new Uint8Array(await crypto.subtle.digest("SHA-256",new TextEncoder().encode(s)))].map(b=>b.toString(16).padStart(2,"0")).join("");
+ const unlock=async()=>{try{if(!hh){if(pw.length<6)return setMsg({e:["Choose a passcode of at least 6 characters."]});const x=await sha(pw);SV("cb_adm_h",x);setHh(x)}else if(await sha(pw)!==hh)return setMsg({e:["Wrong passcode."]});
+  try{sessionStorage.setItem("cb_adm","1")}catch(e){}setOk(true);setMsg(null);setPw("")}catch(e){setMsg({e:["This browser can’t run the passcode check here."]})}};
+ const lock=()=>{try{sessionStorage.removeItem("cb_adm")}catch(e){}setOk(false)};
+ const save=()=>{const e=[],t=f.t.trim(),y=+f.y,s=parseSrc(f.src);
+  if(t.length<2)e.push("Enter a title.");if(!(y>=1888&&y<=2026))e.push("Enter a valid release year (1888–2026).");
+  if(!f.g.length)e.push("Pick at least one genre.");if(f.d.trim().length<10)e.push("Add a description (at least 10 characters).");
+  if(s.e)e.push("Video: "+s.e);
+  if(f.subs.trim()&&!/^https:\/\/.+\.vtt(\?.*)?$/i.test(f.subs.trim()))e.push("Subtitles must be an https link to a .vtt file.");
+  if(f.img.trim()&&!/^https:\/\//i.test(f.img.trim()))e.push("Poster must be an https link.");
+  if(f.lic.trim().length<4)e.push("State the license or public-domain basis, for example “Public domain, per the Internet Archive item page”.");
+  if(!f.ok)e.push("Confirm you have verified the right to stream this film.");
+  if(e.length)return setMsg({e});
+  const x={id:eid||"c"+Date.now(),t,y,g:f.g,r:+f.r||0,m:+f.m||0,d:f.d.trim(),img:f.img.trim(),subs:f.subs.trim(),ia:s.ia,video:s.video||"",lic:f.lic.trim(),custom:true};
+  const all=LS("cb_custom");SV("cb_custom",eid?all.map(a=>a.id===eid?x:a):[...all,x]);build();bump();setF(E);setEid(null);setMsg({ok:eid?"Movie updated.":"Movie added. It now appears across CineBox."})};
+ const edit=m=>{setEid(m.id);setF({t:m.t,y:String(m.y),g:m.g,r:m.r?String(m.r):"",m:m.m?String(m.m):"",d:m.d,src:m.video||"https://archive.org/details/"+m.ia,subs:m.subs||"",img:m.img||"",lic:m.lic,ok:false});setMsg(null);window.scrollTo(0,0)};
+ const del=m=>{if(!confirm("Delete “"+m.t+"”?"))return;SV("cb_custom",LS("cb_custom").filter(a=>a.id!==m.id));build();bump();setMsg({ok:"Deleted."})};
+ const imp=()=>{try{const a=JSON.parse(bk);if(!Array.isArray(a))throw 0;SV("cb_custom",a.filter(x=>x&&x.t&&x.ia).map(x=>({...x,id:x.id||"c"+Math.random().toString(36).slice(2),custom:true,g:x.g||[]})));build();bump();setMsg({ok:"Imported "+a.length+" movies."})}catch(e){setMsg({e:["That backup text is not valid. Paste the JSON you exported."]})}};
+ const Q=q=>"https://archive.org/search?query="+encodeURIComponent(q);
+ if(!ok)return html`<div><div class="pg"><h1 class="d">Admin</h1></div><div class="fm"><p style="color:var(--mut)">${hh?"Enter the admin passcode.":"First visit: choose an admin passcode (6+ characters)."} It protects this screen in this browser only. It is not server security, and your changes are stored in this browser.</p>
+ <label>Passcode<input type="password" value=${pw} onInput=${e=>setPw(e.target.value)} onKeyDown=${e=>e.key==="Enter"&&unlock()}/></label>
+ ${msg&&msg.e?html`<div class="alr" role="alert">${msg.e.join(" ")}</div>`:null}<div><button class="btn p" onClick=${unlock}>${hh?"Unlock":"Set passcode"}</button></div></div></div>`;
+ const cm=M.filter(m=>m.custom);
+ return html`<div><div class="pg"><h1 class="d">Admin: manage movies</h1></div><div class="fm">
+ <div class="alr">Only add films that are in the public domain or licensed for streaming. Internet Archive collections such as Feature Films, Prelinger Archives and Public Domain Movies hold items with different rights, so check each item’s own license field before adding it.
+ <br/><a href=${Q("collection:feature_films")} target="_blank" rel="noopener">Feature Films ↗</a> · <a href=${Q("collection:prelinger")} target="_blank" rel="noopener">Prelinger Archives ↗</a> · <a href=${Q("public domain mediatype:movies")} target="_blank" rel="noopener">Public domain movies ↗</a></div>
+ ${msg&&msg.e?html`<div class="alr" role="alert"><b>Please fix:</b><ul style="margin:4px 0 0;padding-left:20px">${msg.e.map((x,i)=>html`<li key=${i}>${x}</li>`)}</ul></div>`:null}
+ ${msg&&msg.ok?html`<div class="alr ok" role="status">${msg.ok}</div>`:null}
+ <h2 class="d" style="margin:6px 0 0;font-size:28px">${eid?"Edit movie":"Add a movie"}</h2>
+ <label>Title<input type="text" value=${f.t} onInput=${e=>set("t",e.target.value)}/></label>
+ <div class="two"><label>Release year<input type="number" value=${f.y} onInput=${e=>set("y",e.target.value)}/></label><label>Runtime in minutes (optional)<input type="number" value=${f.m} onInput=${e=>set("m",e.target.value)}/></label></div>
+ <div>Genres<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:6px">${GEN.map(g=>html`<button key=${g} class=${"chip"+(f.g.includes(g)?" on":"")} onClick=${()=>set("g",f.g.includes(g)?f.g.filter(x=>x!==g):[...f.g,g])}>${g}</button>`)}</div></div>
+ <label>Description<textarea rows="3" value=${f.d} onInput=${e=>set("d",e.target.value)}></textarea></label>
+ <label>Authorized Internet Archive video URL<input type="text" placeholder="https://archive.org/details/ITEM  or  https://archive.org/download/ITEM/file.mp4" value=${f.src} onInput=${e=>set("src",e.target.value)}/></label>
+ <label>Poster image URL (optional, https)<input type="text" value=${f.img} onInput=${e=>set("img",e.target.value)}/></label>
+ <label>Subtitles .vtt URL (optional, https)<input type="text" value=${f.subs} onInput=${e=>set("subs",e.target.value)}/></label>
+ <div class="two"><label>Rating 0 to 10 (optional)<input type="number" step="0.1" value=${f.r} onInput=${e=>set("r",e.target.value)}/></label><label>License or rights basis<input type="text" placeholder="Public domain, per Internet Archive item page" value=${f.lic} onInput=${e=>set("lic",e.target.value)}/></label></div>
+ <label style="display:flex;flex-direction:row;gap:10px;align-items:flex-start;color:var(--tx)"><input type="checkbox" checked=${f.ok} onChange=${e=>set("ok",e.target.checked)} style="margin-top:5px"/>I have verified that this film is public domain or licensed for streaming here.</label>
+ <div><button class="btn p" onClick=${save}>${eid?"Save changes":"Add movie"}</button>${eid?html`<button class="btn s" onClick=${()=>{setEid(null);setF(E);setMsg(null)}}>Cancel edit</button>`:null}<button class="btn s" onClick=${lock}>Lock admin</button></div>
+ <h2 class="d" style="margin:14px 0 0;font-size:28px">Your added movies (${cm.length})</h2>
+ ${cm.length?cm.map(m=>html`<div class="al" key=${m.id}><span><b>${m.t}</b> (${m.y}) · ${m.video?"custom player":"archive player"}</span><span><button class="chip" onClick=${()=>edit(m)}>Edit</button> <button class="chip" onClick=${()=>del(m)}>Delete</button></span></div>`):html`<div style="color:var(--mut)">Nothing added yet.</div>`}
+ <h2 class="d" style="margin:14px 0 0;font-size:28px">Backup</h2>
+ <textarea rows="4" placeholder="Export fills this box. Paste JSON here and press Import to restore." value=${bk} onInput=${e=>setBk(e.target.value)}></textarea>
+ <div><button class="btn s" onClick=${()=>setBk(JSON.stringify(LS("cb_custom"),null,1))}>Export</button><button class="btn s" onClick=${imp}>Import</button></div></div></div>`}
+
+function App(){
+ const gh=()=>location.hash.slice(1)||"home";
+ const[h,setH]=useState(gh),[q,setQ]=useState(""),[gs,setGs]=useState([]),[sort,setSort]=useState("rel"),[menu,setMenu]=useState(false),[tm,setTm]=useState(""),[ver,setVer]=useState(0);
+ const[wl,tw]=useList("cb_wl"),[fv,tf]=useList("cb_fv"),[prog,setProg]=useState(()=>LS("cb_prog",{}));
+ const sp=(id,t,d,done)=>setProg(p=>{const n={...p,[id]:{t,d,u:Date.now(),done:!!done}};SV("cb_prog",n);return n});
+ const rmProg=id=>setProg(p=>{const n={...p};delete n[id];SV("cb_prog",n);return n});
+ useEffect(()=>{const f=()=>{setH(gh());setMenu(false);window.scrollTo(0,0)};addEventListener("hashchange",f);return()=>removeEventListener("hashchange",f)},[]);
+ const go=x=>{location.hash=x};
+ const toast=t=>{setTm(t);clearTimeout(window._t);window._t=setTimeout(()=>setTm(""),1800)};
+ const P={go,wl,fv,tw,tf,toast,prog,sp,rmProg};
+ const[v,arg]=[h.split("-")[0],h.slice(h.indexOf("-")+1)];
+ const m=byId(arg);
+ let body;
+ if(v==="movie"&&m)body=html`<${Detail} m=${m} ...${P} P=${P}/>`;
+ else if(v==="watch"&&m)body=html`<${Watch} m=${m} go=${go} P=${P}/>`;
+ else if(h==="admin")body=html`<${Admin} bump=${()=>setVer(x=>x+1)}/>`;
+ else if(h==="search"){const R=srch(q,gs,sort),s=q.trim();
+  body=html`<div class="pg"><h1 class="d">${s?"Results for “"+s+"”":"Browse all films"}</h1><p style="color:var(--mut);margin:0">${R.length} film${R.length===1?"":"s"}</p></div>
+  <div class="chips">${GEN.map(g=>html`<button key=${g} class=${"chip"+(gs.includes(g)?" on":"")} onClick=${()=>setGs(p=>p.includes(g)?p.filter(x=>x!==g):[...p,g])}>${g}</button>`)}${gs.length?html`<button class="chip" onClick=${()=>setGs([])}>Clear filters</button>`:null}</div>
+  <div class="sf"><label>Sort by <select value=${sort} onChange=${e=>setSort(e.target.value)}><option value="rel">Best match</option><option value="rating">Rating</option><option value="year">Newest</option><option value="title">Title A–Z</option></select></label></div>
+  <${Grid} items=${R} P=${P} empty=${"No films match"+(s?" “"+s+"”":"")+(gs.length?" in "+gs.join(" + "):"")+". Try fewer words or clear the genre filters."}/>`}
+ else if(v==="genre"){const g=GEN.includes(arg)?arg:"Action";
+  body=html`<div class="pg"><h1 class="d">${g}</h1></div><div class="chips">${GEN.map(x=>html`<button key=${x} class=${"chip"+(x===g?" on":"")} onClick=${()=>go("genre-"+x)}>${x}</button>`)}</div><${Grid} items=${M.filter(x=>x.g.includes(g))} P=${P} empty="No films here yet."/>`}
+ else if(h==="list")body=html`<div class="pg"><h1 class="d">My watchlist</h1></div><${Grid} items=${wl.map(byId).filter(Boolean)} P=${P} empty="Your watchlist is empty. Press + on any film to save it."/>`;
+ else if(h==="favs")body=html`<div class="pg"><h1 class="d">Favourites</h1></div><${Grid} items=${fv.map(byId).filter(Boolean)} P=${P} empty="No favourites yet. Press ♥ on any film."/>`;
+ else{const cont=Object.entries(prog).filter(([id,p])=>byId(id)&&!p.done&&(!p.d||p.t<p.d*.95)).sort((a,b)=>b[1].u-a[1].u).map(([id])=>byId(id));
+  body=html`<div><${Hero} go=${go} wl=${wl} tw=${tw} toast=${toast}/>
+  <div class="chips">${GEN.map(x=>html`<button key=${x} class="chip" onClick=${()=>go("genre-"+x)}>${x}</button>`)}</div>
+  ${cont.length?html`<${Row} title="Continue watching" items=${cont} P=${{...P,cont:true}}/>`:null}
+  <${Row} title="Trending now" items=${TREND.map(byId).filter(Boolean)} P=${P}/>
+  <${Row} title="Popular" items=${[...M].sort((a,b)=>b.r-a.r).slice(0,10)} P=${P}/>
+  ${GEN.map(g=>html`<${Row} key=${g} title=${g} items=${M.filter(x=>x.g.includes(g))} P=${P}/>`)}</div>`}
+ const N=[["home","Home"],["search","Browse"],["genre-Action","Genres"],["list","Watchlist ("+wl.length+")"],["favs","Favourites ("+fv.length+")"]];
+ const on=k=>k===h||(k==="home"&&!h)||(k.startsWith("genre")&&v==="genre");
+ return html`<div><header><button class="logo d" aria-label="CineBox home" onClick=${()=>go("home")}>CINEBOX</button>
+ <nav class=${"nav"+(menu?" open":"")}>${N.map(([k,l])=>html`<button key=${k} class=${on(k)?"on":""} onClick=${()=>go(k)}>${l}</button>`)}</nav>
+ <label class="sr"><span aria-hidden="true">⌕</span><input type="search" placeholder="Search title, genre, year" aria-label="Search films" value=${q} onInput=${e=>{setQ(e.target.value);if(h!=="search")go("search")}}/></label>
+ <button class="burger" aria-label="Menu" onClick=${()=>setMenu(!menu)}>☰</button></header>
+ <main>${body}</main>
+ <footer><div><b class="d" style="font-size:26px;color:var(--red)">CINEBOX</b><p>Free classic cinema. Posters are original artwork made for CineBox unless an admin adds one. Films are public-domain or licensed titles from the Internet Archive.</p></div>
+ <div><button onClick=${()=>go("home")}>Home</button>${GEN.map(g=>html`<button key=${g} onClick=${()=>go("genre-"+g)}>${g}</button>`)}<button onClick=${()=>go("admin")}>Admin</button><p>© 2026 CineBox demo</p></div></footer>
+ ${tm?html`<div class="toast" role="status">${tm}</div>`:null}</div>`}
+ReactDOM.createRoot(document.getElementById("root")).render(html`<${App}/>`);
+</script>
+
+<script>
+if ("serviceWorker" in navigator && (location.protocol === "https:" || location.hostname === "localhost")) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("./sw.js").catch(err => {
+      console.warn("CineBox service worker registration failed:", err);
+    });
+  });
+}
+</script>
+</body>
+</html>
